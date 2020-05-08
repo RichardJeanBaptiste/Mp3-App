@@ -12,6 +12,7 @@
 import sys
 import pyperclip
 from PyQt5.QtWidgets import QApplication, QMessageBox, QPushButton, QVBoxLayout, QWidget
+from mp3 import downloadVid
 
 app = QApplication([])
 window = QWidget()
@@ -19,9 +20,8 @@ layout = QVBoxLayout()
 
 urlButton = QPushButton('Click')
 def on_button_clicked():
-    alert = QMessageBox()
-    alert.setText(pyperclip.paste())
-    alert.exec_()
+    downloadVid(pyperclip.paste())
+
 urlButton.clicked.connect(on_button_clicked)
 layout.addWidget(urlButton)
 window.setLayout(layout)
