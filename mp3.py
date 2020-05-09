@@ -1,19 +1,31 @@
 from mp3_tagger import MP3File
-from PyQt5.QtWidgets import QApplication, QMessageBox, QPushButton, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QApplication, QLabel, QMessageBox, QPushButton, QVBoxLayout, QWidget
 import pafy
 import os
 
 app = QApplication([])
 
-def downloadVid(url):
+# open a window
+# show url details
+# choose download location
+# choose between video/audio
+# download
+
+def downloadVid(url, ext, filepath):
     try:
         video = pafy.new(url)
-        best = video.getbest()
-        best.download()
+        if(ext == 'mp4'):
+            best = video.getbest()
+            best.download(filepath=filepath)
+        else:
+            best = video.getbestaudio()
+            best.download(filepath=filepath)
+        
     except ValueError:
         alert = QMessageBox()
         alert.setText('Enter a valid url')
         alert.exec_()
+
 
 
 '''
