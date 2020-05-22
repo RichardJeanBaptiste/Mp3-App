@@ -11,10 +11,20 @@ app = QApplication([])
 # choose between video/audio
 # download
 
+
+def getStreams(url):
+    streamArray = []
+    video = pafy.new(url)
+    streams = video.streams
+    for s in streams:
+        streamArray.append(s)
+    return streamArray
+
+
 def downloadVid(url, ext, filepath):
     try:
         video = pafy.new(url)
-        if(ext == 'mp4'):
+        if(ext == 'video'):
             best = video.getbest()
             best.download(filepath=filepath)
         else:
@@ -25,6 +35,7 @@ def downloadVid(url, ext, filepath):
         alert = QMessageBox()
         alert.setText('Enter a valid url')
         alert.exec_()
+
 
 def downloadPlaylist(url,ext,filepath):
     try:
