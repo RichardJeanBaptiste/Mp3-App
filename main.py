@@ -9,7 +9,7 @@
 import re
 import sys
 import pyperclip
-from PyQt5.QtWidgets import QApplication, QButtonGroup, QCheckBox, QComboBox, QFileDialog, QLabel, QLineEdit, QMessageBox, QPushButton, QVBoxLayout, QWidget, QWidget
+from PyQt5.QtWidgets import QApplication, QButtonGroup, QCheckBox, QComboBox, QFileDialog, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QMessageBox, QPushButton, QRadioButton, QVBoxLayout, QWidget, QWidget
 from mp3 import downloadVid, downloadPlaylist, getStreams
 
 
@@ -26,16 +26,23 @@ class SubWindow(QWidget):
         layout = QVBoxLayout()
         self.setLayout(layout)
         for x in streams:
-            layout.addWidget(QLabel(str(x),self))
+            radiobutton = QRadioButton(str(x),self)
+            radiobutton.format = str(x)
+            layout.addWidget(radiobutton)
+            radiobutton.toggled.connect(self.onClicked)
         
+
+        
+    def onClicked(self):
+        radioButton = self.sender()
+        if radioButton.isChecked():
+            print(radioButton.format)
 
 
 
 class MainWindow(QWidget):
     def __init__(self, parent = None):
         super(MainWindow, self).__init__(parent)
-
-        #streamArray = []
 
         #enter url
         url = QLineEdit()

@@ -15,10 +15,12 @@ app = QApplication([])
 def getStreams(url):
     streamArray = []
     video = pafy.new(url)
-    streams = video.streams
+    streams = video.videostreams
     for s in streams:
         streamArray.append(s)
+    streamArray = reversed(streamArray)
     return streamArray
+
 
 
 def downloadVid(url, ext, filepath):
