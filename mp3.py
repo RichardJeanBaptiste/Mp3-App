@@ -22,7 +22,15 @@ def getStreams(url):
     return streamArray
 
 
-
+def downloadStream(url, streamName):
+    video = pafy.new(url)
+    streams = video.videostreams
+    for i in range(len(streams)):
+        if(str(streams[i]) == streamName):
+            video.videostreams[i].download()
+    
+    
+        
 def downloadVid(url, ext, filepath):
     try:
         video = pafy.new(url)

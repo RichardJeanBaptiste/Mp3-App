@@ -10,34 +10,49 @@ import re
 import sys
 import pyperclip
 from PyQt5.QtWidgets import QApplication, QButtonGroup, QCheckBox, QComboBox, QFileDialog, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QMessageBox, QPushButton, QRadioButton, QVBoxLayout, QWidget, QWidget
-from mp3 import downloadVid, downloadPlaylist, getStreams
+from mp3 import downloadVid, downloadPlaylist, getStreams, downloadStream
 
 
 class SubWindow(QWidget):
-    def __init__(self, streams, parent = None):
+    currStream  = ''
+    filepath = ''
+    urlString = ''
+
+    def __init__(self, url, streams, parent = None):
         super(SubWindow, self).__init__(parent)
         self.title = "Streams"
         self.top = 200
         self.left = 500
         self.width = 400
-        self.height = 300
+        self.height = 400
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
+        SubWindow.url = url
         layout = QVBoxLayout()
         self.setLayout(layout)
+        #print all the streams / set stream
         for x in streams:
             radiobutton = QRadioButton(str(x),self)
             radiobutton.format = str(x)
             layout.addWidget(radiobutton)
             radiobutton.toggled.connect(self.onClicked)
         
-
-        
+        downloadButton = QPushButton('Download')
+        downloadButton.clicked.connect(self.onDownload)
+        layout.addWidget(downloadButton)
+            
     def onClicked(self):
         radioButton = self.sender()
         if radioButton.isChecked():
-            print(radioButton.format)
-
+            SubWindow.currStream = radioButton.format
+            
+            
+    # download stream
+    def onDownload(self):
+        downloadStream(SubWindow.url, SubWindow.currStream)
+        self.close()
+        
+      
 
 
 class MainWindow(QWidget):
@@ -63,7 +78,9 @@ class MainWindow(QWidget):
             filepath = QFileDialog.getExistingDirectory(caption="Choose Location",directory="/")
 
             if videoCheck.isChecked():
-                self.openSub(getStreams(url.text()))
+                streamList = getStreams(url.text())
+                urlName = url.text()
+                self.openSub(urlName,streamList)
                 #downloadVid(url.text(), 'video', filepath)
             elif audioCheck.isChecked():
                 downloadVid(url.text(), 'audio', filepath)
@@ -78,9 +95,10 @@ class MainWindow(QWidget):
         layout.addWidget(downloadButton)
         self.setLayout(layout)
     
-    def openSub(self,x):
-            self.sub = SubWindow(x)
-            self.sub.show()
+    #open second window
+    def openSub(self,urlName, streamList):
+        self.sub = SubWindow(urlName,streamList)
+        self.sub.show()
 
 app = QApplication(sys.argv)
 mainWin = MainWindow()
