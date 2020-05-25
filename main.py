@@ -5,17 +5,18 @@
 #choose file location
 # create albums
 #download
-
+import os
 import re
 import sys
 import pyperclip
 from PyQt5.QtWidgets import QApplication, QButtonGroup, QCheckBox, QComboBox, QFileDialog, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QMessageBox, QPushButton, QRadioButton, QVBoxLayout, QWidget, QWidget
 from mp3 import downloadVid, downloadPlaylist, getStreams, downloadStream
+from pathlib import Path
 
 
 class SubWindow(QWidget):
     currStream  = ''
-    filepath = ''
+    filepath = str(os.path.join(Path.home(), "Downloads"))
     urlString = ''
 
     def __init__(self, url, streams, parent = None):
@@ -37,30 +38,40 @@ class SubWindow(QWidget):
             layout.addWidget(radiobutton)
             radiobutton.toggled.connect(self.onClicked)
         
+        line = QHBoxLayout()
+        line.addWidget(QLineEdit(placeholderText=SubWindow.filepath, readOnly=True))
+        locationButton = QPushButton('Change Directory')
+        locationButton.clicked.connect(self.changeLocation)
+        line.addWidget(locationButton)
+        
         downloadButton = QPushButton('Download')
         downloadButton.clicked.connect(self.onDownload)
+        layout.addLayout(line)
         layout.addWidget(downloadButton)
             
     def onClicked(self):
         radioButton = self.sender()
         if radioButton.isChecked():
             SubWindow.currStream = radioButton.format
-            
-            
+    
+    def changeLocation(self):
+        filepath = QFileDialog.getExistingDirectory(caption="Choose Location",directory=SubWindow.filepath)
+        SubWindow.filepath = filepath
+             
     # download stream
     def onDownload(self):
-        downloadStream(SubWindow.url, SubWindow.currStream)
+        downloadStream(SubWindow.url, SubWindow.filepath, SubWindow.currStream)
         self.close()
         
       
-
-
 class MainWindow(QWidget):
     def __init__(self, parent = None):
         super(MainWindow, self).__init__(parent)
 
         #enter url
         url = QLineEdit()
+
+        
 
         #audio/video checkbox
         audioCheck = QCheckBox('audio')
@@ -72,18 +83,17 @@ class MainWindow(QWidget):
         # download button
         downloadButton = QPushButton('Click')
 
-
         def on_button_clicked():
 
-            filepath = QFileDialog.getExistingDirectory(caption="Choose Location",directory="/")
-
+            
             if videoCheck.isChecked():
                 streamList = getStreams(url.text())
                 urlName = url.text()
                 self.openSub(urlName,streamList)
                 #downloadVid(url.text(), 'video', filepath)
             elif audioCheck.isChecked():
-                downloadVid(url.text(), 'audio', filepath)
+                print('abcd')
+                #downloadVid(url.text(), 'audio', filepath)
 
         
         downloadButton.clicked.connect(on_button_clicked)
