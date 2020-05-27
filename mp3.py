@@ -12,25 +12,39 @@ app = QApplication([])
 # download
 
 
-def getStreams(url):
+def getStreams(url, x):
     streamArray = []
     video = pafy.new(url)
-    streams = video.videostreams
-    for s in streams:
-        streamArray.append(s)
-    streamArray = reversed(streamArray)
-    return streamArray
 
+    if(x == 'video'):
+        streams = video.videostreams
+        for s in streams:
+            streamArray.append(s)
+        streamArray = reversed(streamArray)
+        return streamArray
+    else:
+        streams = video.audiostreams
+        for s in streams:
+            streamArray.append(s)
+        streamArray = reversed(streamArray)
+        return streamArray
 
-def downloadStream(url, filepath, streamName):
+    
+def downloadStream(url, filepath, streamName, format):
     video = pafy.new(url)
-    streams = video.videostreams
-    for i in range(len(streams)):
-        if(str(streams[i]) == streamName):
-            video.videostreams[i].download(filepath=filepath)
     
-    
-        
+    if(format == video):
+        streams = video.videostreams
+        for i in range(len(streams)):
+            if(str(streams[i]) == streamName):
+                video.videostreams[i].download(filepath=filepath)
+    else:
+        streams = video.audiostreams
+        for i in range(len(streams)):
+            if(str(streams[i]) == streamName):
+                video.audiostreams[i].download(filepath=filepath)
+
+            
 def downloadVid(url, ext, filepath):
     try:
         video = pafy.new(url)

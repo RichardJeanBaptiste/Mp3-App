@@ -18,8 +18,9 @@ class SubWindow(QWidget):
     currStream  = ''
     filepath = str(os.path.join(Path.home(), "Downloads"))
     urlString = ''
+    format = ''
 
-    def __init__(self, url, streams, parent = None):
+    def __init__(self, url, streams, format, parent = None):
         super(SubWindow, self).__init__(parent)
         self.title = "Streams"
         self.top = 200
@@ -29,6 +30,7 @@ class SubWindow(QWidget):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
         SubWindow.url = url
+        SubWindow.format = format
         layout = QVBoxLayout()
         self.setLayout(layout)
         #print all the streams / set stream
@@ -60,7 +62,7 @@ class SubWindow(QWidget):
              
     # download stream
     def onDownload(self):
-        downloadStream(SubWindow.url, SubWindow.filepath, SubWindow.currStream)
+        downloadStream(SubWindow.url, SubWindow.filepath, SubWindow.currStream, SubWindow.format)
         self.close()
         
       
@@ -71,43 +73,43 @@ class MainWindow(QWidget):
         #enter url
         url = QLineEdit()
 
-        
-
         #audio/video checkbox
         audioCheck = QCheckBox('audio')
         videoCheck = QCheckBox('video')
         self.buttongroup = QButtonGroup()
         self.buttongroup.addButton(audioCheck, 2)
         self.buttongroup.addButton(videoCheck, 3)
+        
+        formatButtons = QHBoxLayout()
+        formatButtons.addWidget(audioCheck)
+        formatButtons.addWidget(videoCheck)
+        
 
         # download button
         downloadButton = QPushButton('Click')
 
         def on_button_clicked():
 
-            
             if videoCheck.isChecked():
-                streamList = getStreams(url.text())
+                streamList = getStreams(url.text(), 'video')
                 urlName = url.text()
-                self.openSub(urlName,streamList)
-                #downloadVid(url.text(), 'video', filepath)
+                self.openSub(urlName,streamList, 'video')
             elif audioCheck.isChecked():
-                print('abcd')
-                #downloadVid(url.text(), 'audio', filepath)
+                streamList = getStreams(url.text(), 'audio')
+                urlName = url.text()
+                self.openSub(urlName,streamList, 'audio')
 
-        
         downloadButton.clicked.connect(on_button_clicked)
 
         layout = QVBoxLayout()
         layout.addWidget(url)
-        layout.addWidget(audioCheck)
-        layout.addWidget(videoCheck)
+        layout.addLayout(formatButtons)
         layout.addWidget(downloadButton)
         self.setLayout(layout)
     
     #open second window
-    def openSub(self,urlName, streamList):
-        self.sub = SubWindow(urlName,streamList)
+    def openSub(self,urlName, streamList, format):
+        self.sub = SubWindow(urlName,streamList, format)
         self.sub.show()
 
 app = QApplication(sys.argv)
