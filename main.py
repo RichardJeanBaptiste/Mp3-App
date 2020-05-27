@@ -10,7 +10,7 @@ import re
 import sys
 import pyperclip
 from PyQt5.QtWidgets import QApplication, QButtonGroup, QCheckBox, QComboBox, QFileDialog, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QMessageBox, QPushButton, QRadioButton, QVBoxLayout, QWidget, QWidget
-from mp3 import downloadVid, downloadPlaylist, getStreams, downloadStream
+from mp3 import downloadPlaylist, getStreams, downloadStream
 from pathlib import Path
 
 
@@ -19,6 +19,7 @@ class SubWindow(QWidget):
     filepath = str(os.path.join(Path.home(), "Downloads"))
     urlString = ''
     format = ''
+    filePathLine = QLineEdit(placeholderText=filepath, readOnly=True)
 
     def __init__(self, url, streams, format, parent = None):
         super(SubWindow, self).__init__(parent)
@@ -33,6 +34,7 @@ class SubWindow(QWidget):
         SubWindow.format = format
         layout = QVBoxLayout()
         self.setLayout(layout)
+
         #print all the streams / set stream
         for x in streams:
             radiobutton = QRadioButton(str(x),self)
@@ -41,7 +43,7 @@ class SubWindow(QWidget):
             radiobutton.toggled.connect(self.onClicked)
         
         line = QHBoxLayout()
-        line.addWidget(QLineEdit(placeholderText=SubWindow.filepath, readOnly=True))
+        line.addWidget(SubWindow.filePathLine)
         locationButton = QPushButton('Change Directory')
         locationButton.clicked.connect(self.changeLocation)
         line.addWidget(locationButton)
@@ -56,9 +58,12 @@ class SubWindow(QWidget):
         if radioButton.isChecked():
             SubWindow.currStream = radioButton.format
     
+    # change file location
     def changeLocation(self):
         filepath = QFileDialog.getExistingDirectory(caption="Choose Location",directory=SubWindow.filepath)
         SubWindow.filepath = filepath
+        SubWindow.filePathLine.setText(filepath)
+        
              
     # download stream
     def onDownload(self):
@@ -89,15 +94,21 @@ class MainWindow(QWidget):
         downloadButton = QPushButton('Click')
 
         def on_button_clicked():
-
             if videoCheck.isChecked():
-                streamList = getStreams(url.text(), 'video')
-                urlName = url.text()
-                self.openSub(urlName,streamList, 'video')
+                try:
+                    streamList = getStreams(url.text(), 'video')
+                    urlName = url.text()
+                    self.openSub(urlName,streamList, 'video')
+                except TypeError:
+                    pass
             elif audioCheck.isChecked():
-                streamList = getStreams(url.text(), 'audio')
-                urlName = url.text()
-                self.openSub(urlName,streamList, 'audio')
+                try:
+                    streamList = getStreams(url.text(), 'audio')
+                    urlName = url.text()
+                    self.openSub(urlName,streamList, 'audio')
+                except TypeError:
+                    pass
+                
 
         downloadButton.clicked.connect(on_button_clicked)
 

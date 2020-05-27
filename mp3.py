@@ -11,23 +11,26 @@ app = QApplication([])
 # choose between video/audio
 # download
 
-
 def getStreams(url, x):
-    streamArray = []
-    video = pafy.new(url)
-
-    if(x == 'video'):
-        streams = video.videostreams
-        for s in streams:
-            streamArray.append(s)
-        streamArray = reversed(streamArray)
-        return streamArray
-    else:
-        streams = video.audiostreams
-        for s in streams:
-            streamArray.append(s)
-        streamArray = reversed(streamArray)
-        return streamArray
+    try:
+        streamArray = []
+        video = pafy.new(url)
+        if(x == 'video'):
+            streams = video.videostreams
+            for s in streams:
+                streamArray.append(s)
+            streamArray = reversed(streamArray)
+            return streamArray
+        else:
+            streams = video.audiostreams
+            for s in streams:
+                streamArray.append(s)
+            streamArray = reversed(streamArray)
+            return streamArray
+    except ValueError:
+        alert = QMessageBox()
+        alert.setText('Enter a valid url')
+        alert.exec_()
 
     
 def downloadStream(url, filepath, streamName, format):
@@ -45,21 +48,6 @@ def downloadStream(url, filepath, streamName, format):
                 video.audiostreams[i].download(filepath=filepath)
 
             
-def downloadVid(url, ext, filepath):
-    try:
-        video = pafy.new(url)
-        if(ext == 'video'):
-            best = video.getbest()
-            best.download(filepath=filepath)
-        else:
-            best = video.getbestaudio()
-            best.download(filepath=filepath)
-        
-    except ValueError:
-        alert = QMessageBox()
-        alert.setText('Enter a valid url')
-        alert.exec_()
-
 
 def downloadPlaylist(url,ext,filepath):
     try:
