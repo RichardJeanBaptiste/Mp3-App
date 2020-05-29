@@ -93,27 +93,30 @@ class MainWindow(QWidget):
         #playlist checkbox
         playlistCheck = QCheckBox('playlist')
         
-
         # download button
         downloadButton = QPushButton('Click')
 
         def on_button_clicked():
+            urlName = url.text()
 
             if(playlistCheck.isChecked()):
-                self.openPlaylist()
+                try:
+                    self.openPlaylist(urlName)
+                except ValueError:
+                    alert = QMessageBox()
+                    alert.setText('Enter a valid url')
+                    alert.exec_()
                 return
 
             if videoCheck.isChecked():
                 try:
                     streamList = getStreams(url.text(), 'video')
-                    urlName = url.text()
                     self.openSub(urlName,streamList, 'video')
                 except TypeError:
                     pass
             elif audioCheck.isChecked():
                 try:
                     streamList = getStreams(url.text(), 'audio')
-                    urlName = url.text()
                     self.openSub(urlName,streamList, 'audio')
                 except TypeError:
                     pass
@@ -133,8 +136,8 @@ class MainWindow(QWidget):
         self.sub = SubWindow(urlName,streamList, format)
         self.sub.show()
     
-    def openPlaylist(self):
-        self.sub = playlistWindow()
+    def openPlaylist(self,url):
+        self.sub = playlistWindow(url)
         self.sub.show()
 
 

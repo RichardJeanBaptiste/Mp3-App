@@ -47,8 +47,6 @@ def downloadStream(url, filepath, streamName, format):
             if(str(streams[i]) == streamName):
                 video.audiostreams[i].download(filepath=filepath)
 
-            
-
 def downloadPlaylist(url,ext,filepath):
     try:
         plurl = url
@@ -70,7 +68,9 @@ def downloadPlaylist(url,ext,filepath):
         alert.setText('Enter a valid url')
         alert.exec_()
 
-'''
+
+
+
 plurl = "https://www.youtube.com/playlist?list=PLPRWtKgY2MOsxT6cdEgVpBV-rijwjbbs3"
 playlist = pafy.get_playlist(plurl)
 
@@ -82,9 +82,7 @@ for x in range(len(playlist)):
     except OSError:
         print('no video formats found...try again')
     
-
-
-
+'''
 urls = os.listdir("tmp")
 
 count = 0
