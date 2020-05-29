@@ -12,6 +12,7 @@ import pyperclip
 from PyQt5.QtWidgets import QApplication, QButtonGroup, QCheckBox, QComboBox, QFileDialog, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QMessageBox, QPushButton, QRadioButton, QVBoxLayout, QWidget, QWidget
 from mp3 import downloadPlaylist, getStreams, downloadStream
 from pathlib import Path
+from playlist import playlistWindow
 
 
 class SubWindow(QWidget):
@@ -88,12 +89,20 @@ class MainWindow(QWidget):
         formatButtons = QHBoxLayout()
         formatButtons.addWidget(audioCheck)
         formatButtons.addWidget(videoCheck)
+
+        #playlist checkbox
+        playlistCheck = QCheckBox('playlist')
         
 
         # download button
         downloadButton = QPushButton('Click')
 
         def on_button_clicked():
+
+            if(playlistCheck.isChecked()):
+                self.openPlaylist()
+                return
+
             if videoCheck.isChecked():
                 try:
                     streamList = getStreams(url.text(), 'video')
@@ -115,6 +124,7 @@ class MainWindow(QWidget):
         layout = QVBoxLayout()
         layout.addWidget(url)
         layout.addLayout(formatButtons)
+        layout.addWidget(playlistCheck)
         layout.addWidget(downloadButton)
         self.setLayout(layout)
     
@@ -122,6 +132,11 @@ class MainWindow(QWidget):
     def openSub(self,urlName, streamList, format):
         self.sub = SubWindow(urlName,streamList, format)
         self.sub.show()
+    
+    def openPlaylist(self):
+        self.sub = playlistWindow()
+        self.sub.show()
+
 
 app = QApplication(sys.argv)
 mainWin = MainWindow()

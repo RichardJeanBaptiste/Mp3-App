@@ -1,6 +1,7 @@
 import os
 import pyperclip
 import re
+import pafy
 
 
 #print(pyperclip.paste())
@@ -8,10 +9,12 @@ import re
 
 #os.system(string)
 
-txt = "https://www.youtube.com/playlist?list=PLPRWtKgY2MOtt1GQCYBJviLbSaOFW1OHE"
-x = re.search("(/playlist?)", txt)
+patt = "list="
+url = "https://www.youtube.com/playlist?list=PLBOh8f9FoHHjOz0vGrD20WcTtJar-LOrw"
 
-if (x):
-  print("YES! We have a match!")
+x = re.search(patt, url)
+
+if x:
+  print("match")
 else:
   print("No match")
