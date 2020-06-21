@@ -2,6 +2,7 @@ from mp3_tagger import MP3File
 from PyQt5.QtWidgets import QApplication, QLabel, QMessageBox, QPushButton, QVBoxLayout, QWidget
 import pafy
 import os
+import re
 
 app = QApplication([])
 
@@ -54,13 +55,13 @@ def downloadPlaylist(url,ext,filepath):
         if(ext == 'mp4'):
             for x in range(len(playlist)):
                 try:
-                   playlist['items'][x]['pafy'].getbestvideo().download(filepath=filepath)
+                   playlist['items'][x]['pafy'].getbestvideo().download(filepath="tmp")
                 except OSError:
                     print('no video formats found...try again')
         else:
-            for x in range(len(playlist)):
+            for x in range(len(playlist) - 1):
                 try:
-                   playlist['items'][x]['pafy'].getbestaudio().download(filepath=filepath)
+                   playlist['items'][x]['pafy'].getbestaudio().download(filepath="tmp")
                 except OSError:
                     print('no video formats found...try again')
     except ValueError:
@@ -71,32 +72,46 @@ def downloadPlaylist(url,ext,filepath):
 
 
 
-plurl = "https://www.youtube.com/playlist?list=PLPRWtKgY2MOsxT6cdEgVpBV-rijwjbbs3"
+plurl = "https://www.youtube.com/playlist?list=PLPRWtKgY2MOtotXGiOBUjigHFNnDtgue3"
 playlist = pafy.get_playlist(plurl)
 
 
-for x in range(len(playlist)):
+for x in range(len(playlist) - 1):
     try:
-        print(playlist['items'][x]['pafy'])
+        #print(playlist['items'][x]['pafy'].title)
         playlist['items'][x]['pafy'].getbestaudio().download(filepath="tmp")
+        #cwd = os.getcwd()
     except OSError:
         print('no video formats found...try again')
-    
-'''
+    except IndexError:
+        pass
+
+
 urls = os.listdir("tmp")
-
-count = 0
-
-os.chdir("/Users/Richard/Desktop/mp3-api/tmp")
+os.chdir("/Users/Richard/Documents/Projects/mp3-api/tmp")
 
 for x in urls:
-    a = os.path.abspath(x)
-    count = count + 1
-    string = "ffmpeg -i '{curr}' {output}.mp3"
-    string = string.format(curr=a,output=count)
-    os.system(string)
+    asd = os.path.splitext(x)
+    songTitle = asd[0]
+    extension = asd[1]
 
-os.chdir("/Users/Richard/Desktop/mp3-api/")
+    regex = re.compile('[^a-zA-Z]')
+    newName = regex.sub('', asd[0])
+
+    newFilename = newName + asd[1]
+    os.rename(x,newFilename)
+
+    try:
+        a = os.getcwd() + "/" + newFilename
+        string = "ffmpeg -i {curr}  '{output}'.mp3"
+        string = string.format(curr=a,output=songTitle)
+        os.system(string)
+    except Exception:
+        pass
+    
+        
+'''
+os.chdir("/Users/Richard/Documents/Projects/mp3-api/tmp")
 urlsb = os.listdir("tmp")
 
 def changeTags(x):
@@ -112,5 +127,5 @@ def changeTags(x):
 
 
 for x in urlsb:
-    print(x)
+    changeTags(x)
 '''
