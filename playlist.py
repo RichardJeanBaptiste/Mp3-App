@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import *
 from pathlib import Path
-from mp3 import downloadPlaylist
+from mp3 import downloadPlaylist, changeTags
 import pafy
 import os
 import sys
@@ -77,7 +77,9 @@ class playlistWindow(QWidget):
     # download stream
     def onDownload(self):
         downloadPlaylist(playlistWindow.urlstring,playlistWindow.ext,playlistWindow.filepath)
+        changeTags(playlistWindow.albumArtist, playlistWindow.albumName,playlistWindow.filepath)
         self.close()
+
             
     
 app = QApplication([])

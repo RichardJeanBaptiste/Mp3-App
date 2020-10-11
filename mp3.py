@@ -1,5 +1,6 @@
 from mp3_tagger import MP3File
 from PyQt5.QtWidgets import QApplication, QLabel, QMessageBox, QPushButton, QVBoxLayout, QWidget
+import ffmpeg
 import pafy
 import os
 import re
@@ -58,20 +59,47 @@ def downloadPlaylist(url,ext,filepath):
                    playlist['items'][x]['pafy'].getbestvideo().download(filepath="tmp")
                 except OSError:
                     print('no video formats found...try again')
+                except IndexError:
+                    pass
         else:
             for x in range(len(playlist) - 1):
                 try:
                    playlist['items'][x]['pafy'].getbestaudio().download(filepath="tmp")
                 except OSError:
                     print('no video formats found...try again')
+                except IndexError:
+                    pass
     except ValueError:
         alert = QMessageBox()
         alert.setText('Enter a valid url')
         alert.exec_()
 
+def changeTags(artist,album,filepath):
+    #os.chdir("/Users/Richard/Documents/Projects/mp3-api/")
+    urls = os.listdir("tmp")
+    
+    print(filepath)
+    try:
+        for x in urls:
+            newPath = filepath + "/" + x[:-5] + ".mp3"
+            songPath = filepath + "/" + x
+            stream = ffmpeg.input(songPath)
+            stream = ffmpeg.output(stream, newPath)
+            ffmpeg.run(stream)
+            mp3 = MP3File(newPath)
+            mp3.artist = artist
+            mp3.album = album
+            mp3.save()
+            os.remove(songPath)
+    except Exception as e:
+        print(e)
+        pass
 
 
 
+
+
+'''
 plurl = "https://www.youtube.com/playlist?list=PLPRWtKgY2MOtotXGiOBUjigHFNnDtgue3"
 playlist = pafy.get_playlist(plurl)
 
@@ -108,7 +136,7 @@ for x in urls:
         os.system(string)
     except Exception:
         pass
-    
+'''
         
 '''
 os.chdir("/Users/Richard/Documents/Projects/mp3-api/tmp")
