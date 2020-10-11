@@ -8,7 +8,6 @@
 import os
 import re
 import sys
-import pyperclip
 from PyQt5.QtWidgets import QApplication, QButtonGroup, QCheckBox, QComboBox, QFileDialog, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QMessageBox, QPushButton, QRadioButton, QVBoxLayout, QWidget, QWidget
 from mp3 import downloadPlaylist, getStreams, downloadStream
 from pathlib import Path
