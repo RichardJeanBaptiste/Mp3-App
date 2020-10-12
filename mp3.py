@@ -75,25 +75,52 @@ def downloadPlaylist(url,ext,filepath):
         alert.exec_()
 
 def changeTags(artist,album,filepath):
-    #os.chdir("/Users/Richard/Documents/Projects/mp3-api/")
-    urls = os.listdir("tmp")
+    os.chdir(os.getcwd() + '/tmp')
+    #print(os.getcwd())
+    urls = os.listdir(os.getcwd())
+    #print(filepath)
     
-    print(filepath)
+    try:
+        os.remove("DSStore")
+    except Exception as e:
+        pass
+        
     try:
         for x in urls:
             newPath = filepath + "/" + x[:-5] + ".mp3"
-            songPath = filepath + "/" + x
-            stream = ffmpeg.input(songPath)
-            stream = ffmpeg.output(stream, newPath)
-            ffmpeg.run(stream)
-            mp3 = MP3File(newPath)
-            mp3.artist = artist
-            mp3.album = album
-            mp3.save()
-            os.remove(songPath)
+            songPath = os.getcwd() + "\\" + x
+
+            changeToMp3(newPath,songPath)
+
+            changeMetaTags(newPath,songPath,artist,album)
+            
+    except IOError as e:
+        print(e)
+        pass      
     except Exception as e:
         print(e)
         pass
+
+def changeToMp3(newPath,songPath):
+    try:
+        stream = ffmpeg.input(songPath)
+        stream = ffmpeg.output(stream, newPath)
+        ffmpeg.run(stream)
+    except Exception as e:
+        print(e)
+        pass
+
+def changeMetaTags(newPath,songPath,artist,album):
+    try:
+        mp3 = MP3File(newPath)
+        mp3.artist = artist
+        mp3.album = album
+        mp3.save()
+        os.remove(songPath)
+    except Exception as e:
+        print(e)
+        pass
+
 
 
 

@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['main.py'],
-             pathex=['/Users/Richard/Desktop/Mp3-App'],
+             pathex=['C:\\Users\\Richard\\Desktop\\Mp3-App'],
              binaries=[],
              datas=[],
              hiddenimports=[],
